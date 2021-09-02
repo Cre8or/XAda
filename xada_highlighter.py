@@ -427,7 +427,7 @@ def_number = r"\b[0-9]+(?:_[0-9]+)*(?:\.[0-9]+)?(?:_[0-9]+)*"
 def_number_based = r"\b[0-9]+#[0-9a-f]+(?:_[0-9a-f]+)*#"
 def_character = r"\'.\'"
 
-def_escape_identifier = r"(?<![a-z0-9])"
+def_escape_identifier = r"(?<![a-z0-9_])"
 
 def_negative_lookahead_blocks = "(?!(?:" + "\s+)|(?:".join([
 	"begin",
