@@ -213,6 +213,9 @@ ada_attributes = r"(?<=\')" + ("|" + r"(?<=\')").join([
 	"Width",
 	"Word_Size",
 	"Write",
+	
+	# GNAT Preprocessor
+	"Defined",
 ])
 
 ada_keywords = "|".join([
@@ -628,6 +631,9 @@ hl_function_parentheses = region(
 	igncase=True,
 	tag=tag_operator,
 	highlighter=(
+		# Comments
+		hl_comment,
+
 		# Attributes
 		words(ada_attributes, tag=tag_attribute),
 
