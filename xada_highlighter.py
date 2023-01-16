@@ -4,7 +4,7 @@ This plugin provides extended syntax highlighting for Ada source files.
 It also adds additional highlighting styles, which can be reconfigured
 inside the GNAT preferences (under "Editor" > "Fonts & Colours").
 
-Copyright (C) 2021 Cre8or
+Copyright (C) 2021-2023 Cre8or
 """
 
 import sys
