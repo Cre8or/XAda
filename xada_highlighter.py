@@ -412,6 +412,7 @@ ada_predefined_packages = "|".join([
 	# OpenGL
 	"GL",
 	"Glfw",
+	"Dear_ImGui",
 
 	# Custom (NOTE: add user/application-specific units here)
 	"A3D",
@@ -570,7 +571,7 @@ hl_comment = region(
 
 hl_identifier_declaration = region(
 	r"(?<=\:)\s*(?=[a-z])" + def_negative_lookahead_blocks,
-	r"(?!(?:_?[a-z0-9])+|(?:[\.\s](?!renames\s+)))",
+	r"(?!(?:_?[a-z0-9])+|(?:\s+(?!(?:renames)|(?:with)\s+)))",
 	igncase=True,
 	tag=tag_keyword,
 	highlighter=(
@@ -625,7 +626,7 @@ hl_function_return = region(
 )
 
 hl_function_parentheses = region(
-	r"\(",
+	r"[ \t]*\(",
 	r"\)",
 	name="hl_function_parentheses",
 	igncase=True,
@@ -693,6 +694,26 @@ hl_function = region(
 	)
 )
 
+hl_entry = region(
+	r"(?<![a-z0-9_])entry\s+",
+	r"(?<![^a-z0-9_]entry)",
+	igncase=True,
+	tag=tag_keyword,
+	highlighter=(
+		simple(def_identifier, tag_block),
+	)
+)
+
+hl_accept = region(
+	r"(?<![a-z0-9_])accept\s+",
+	r"(?<![^a-z0-9_]accept)",
+	igncase=True,
+	tag=tag_keyword,
+	highlighter=(
+		simple(def_identifier, tag_block),
+	)
+)
+
 hl_block_end = region(
 	r"(?<![a-z0-9_])end\s+",
 	r"(?<![^a-z0-9_]end)",
@@ -753,6 +774,8 @@ register_highlighter(
 		hl_package,
 		hl_procedure,
 		hl_function,
+		hl_entry,
+		hl_accept,
 		hl_block_end,
 		hl_case_block,
 
