@@ -615,7 +615,7 @@ hl_procedure = region(
 
 hl_function_return = region(
 	r"\s+return\s+",
-	r"(?<![^a-z0-9_]return)",
+	r"(?<![^a-z0-9_](?:(?:.{2}\sreturn)|(?:.{5}\snot)|(?:.{4}\snull)|(?:.{2}\saccess)|(?:\sconstant)))",	# Look-behind requires fixed-width patterns in GNAT Studio
 	igncase=True,
 	tag=tag_keyword,
 	highlighter=(
@@ -755,6 +755,18 @@ hl_case_block = region(
 	)
 )
 
+hl_use_type = region(
+	r"(?<![a-z0-9_])use\s+type\s+",
+	r"(?=[;\s\n])",
+	igncase=True,
+	tag=tag_keyword,
+	highlighter=(
+		words(ada_keywords, tag=tag_keyword_prio),
+		simple(def_identifier, tag_type),
+		simple(r"\.", tag_operator),
+	)
+)
+
 
 
 
@@ -769,7 +781,7 @@ register_highlighter(
 		# Comments
 		hl_comment,
 
-		# Packages / procedures / functions
+		# Priority highlighters
 		hl_package_body,
 		hl_package,
 		hl_procedure,
@@ -778,6 +790,7 @@ register_highlighter(
 		hl_accept,
 		hl_block_end,
 		hl_case_block,
+		hl_use_type,
 
 		# Attributes
 		words(ada_attributes, tag=tag_attribute),
@@ -816,7 +829,7 @@ register_highlighter(
 		simple(custom_members, tag_member),
 
 		# Pragmas
-		simple(r"(?<=pragma)\s+" + def_identifier, tag_pragma),
+		simple(r"(?<=pragma)[\t ]+" + def_identifier, tag_pragma),
 
 		# Operators
 		hl_operator,
