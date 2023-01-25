@@ -571,7 +571,7 @@ hl_comment = region(
 
 hl_identifier_declaration = region(
 	r"(?<=\:)\s*(?=[a-z])" + def_negative_lookahead_blocks,
-	r"(?!(?:_?[a-z0-9])+|(?:\s+(?!(?:renames)|(?:with)\s+)))",
+	r"(?!(?:_?[a-z0-9])+|(?:\s+(?!(?:renames)|(?:with)|(?:do)\s+)))",
 	igncase=True,
 	tag=tag_keyword,
 	highlighter=(
