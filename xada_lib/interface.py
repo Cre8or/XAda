@@ -184,7 +184,7 @@ def search_for_capturing_groups(regexp_string):
     :param str regexp_string: The regular expression we want to analyze.
     """
     # return re.findall(r"[^\\]\((?!\?:)", regexp_string)	# Too restrictive; does not support look-ahead groups
-    return re.findall(r"[^\\]\((?!\?[\:\=\!\<\i])", regexp_string)
+    return re.findall(r"[^\\]\((?!\?[\:\=\!\<])", regexp_string)
 
 
 def simple(regexp_string, tag):
