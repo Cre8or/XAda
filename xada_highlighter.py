@@ -213,7 +213,7 @@ ada_attributes = r"(?<=\')" + ("|" + r"(?<=\')").join([
 	"Width",
 	"Word_Size",
 	"Write",
-	
+
 	# GNAT Preprocessor
 	"Defined",
 ])
@@ -426,12 +426,12 @@ ada_predefined_packages = "|".join([
 # Base definitions
 # --------------------------------------------------------------------------------------------------------------------------------
 
-def_identifier = r"[a-z][a-z0-9]*(?:_[a-z0-9]+)*"
+def_identifier = r"[a-zA-Z][a-zA-Z0-9]*(?:_[a-zA-Z0-9]+)*"
 def_number = r"\b[0-9]+(?:_[0-9]+)*(?:\.[0-9]+)?(?:_[0-9]+)*"
 def_number_based = r"\b[0-9]+#[0-9a-f]+(?:_[0-9a-f]+)*#"
 def_character = r"\'.\'"
 
-def_escape_identifier = r"(?<![a-z0-9_])"
+def_escape_identifier = r"(?<![a-zA-Z0-9_])"
 
 def_negative_lookahead_blocks = "(?!(?:" + "\s+)|(?:".join([
 	"begin",
@@ -444,6 +444,11 @@ def_negative_lookahead_blocks = "(?!(?:" + "\s+)|(?:".join([
 
 	"while",
 ]) + "\s+))"
+
+def_preprocessor = def_escape_identifier + r"#[a-zA-Z0-9_]+\b"
+
+def_include_string = r"(?<=#include[ \t])[ \t]*<[^\n\r>]+>"
+def_class_cpp = def_escape_identifier + def_identifier + r"(?=::)"
 
 
 
@@ -466,6 +471,7 @@ custom_members = def_escape_identifier + r"[mg](?:_[a-z0-9]+)+"
 custom_exceptions_prefix = def_escape_identifier + r"ex(?:_[a-z0-9]+)+"
 custom_exceptions_suffix = def_identifier + "_exception" + r"(?![a-z0-9_])"
 
+custom_macros = r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*\b"
 
 
 
@@ -556,11 +562,33 @@ tag_keyword_prio = Style("keyword_prio", 4, tag_keyword.pref)
 
 hl_string = region('"', r'"|[^\\]$', matchall=False, tag=tag_string)
 
-hl_operator = simple(r"[\(\)\+\-\*\/\:\&\=\,\.\;\'\<\>]", tag_operator)
+hl_operator = simple(r"[\(\)\+\-\*\/\:\&\=\,\.\;\'\<\>\{\}]", tag_operator)
 
 hl_comment = region(
 	r"--",
 	r"[\n\r]",
+	igncase=False,
+	tag=tag_comment,
+	highlighter=(
+		simple(r"TO-?DO(?![a-zA-Z0-9_])", tag_annotation),
+		simple(r"DEBUG(?![a-zA-Z0-9_])", tag_annotation),
+	)
+)
+
+hl_comment_cpp_single = region(
+	r"\/\/",
+	r"[\n\r]",
+	igncase=False,
+	tag=tag_comment,
+	highlighter=(
+		simple(r"TO-?DO(?![a-zA-Z0-9_])", tag_annotation),
+		simple(r"DEBUG(?![a-zA-Z0-9_])", tag_annotation),
+	)
+)
+
+hl_comment_cpp_multi = region(
+	r"\/\*",
+	r"\*\/",
 	igncase=False,
 	tag=tag_comment,
 	highlighter=(
@@ -835,4 +863,42 @@ register_highlighter(
 		hl_operator,
 	),
 	igncase=True
+)
+
+
+register_highlighter(
+	language="c++",
+	spec=(
+		# Comments
+		hl_comment_cpp_multi,
+		hl_comment_cpp_single,
+
+		# Literals
+		simple(def_number_based, tag_number),
+		simple(def_number, tag_number),
+		simple(def_character, tag_string),
+		simple(def_include_string, tag_string),
+		hl_string,
+
+		# Preprocessor directives
+		simple(def_preprocessor, tag_preprocessor),
+
+		# C++ classes
+		simple(def_class_cpp, tag_package),
+
+		# Enumerations
+		words(ada_predefined_enumerations, tag=tag_enumeration),
+		simple(custom_enumeration, tag_enumeration),
+		simple(custom_macros, tag_enumeration),
+
+		# Constants
+		simple(custom_constants, tag_constant),
+
+		# Members
+		simple(custom_members, tag_member),
+
+		# Operators
+		hl_operator,
+	),
+	igncase=False
 )

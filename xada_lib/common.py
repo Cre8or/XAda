@@ -24,6 +24,18 @@ comments.
 :type: Style
 """
 
+tag_preprocessor = new_style(lang="General",
+                              name="preprocessor",
+                              label="Preprocessor directives",
+                              doc='',
+                              foreground_colors=("#A0A0F0", "#A0A0F0"))
+"""
+Style for preprocessor directives
+
+:type: Style
+"""
+
+
 tag_default = existing_style("Src-Editor-Reference-Style", "default")
 """
 Default style
